@@ -1,83 +1,27 @@
 name: CI tests
 
-on: [push, workflow_dispatch]
+on: [push]
 
 jobs:
-  linux:
-
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
       matrix:
-        cmake_opts:
-          - '-DCMARK_SHARED=ON'
-          - ''
-        compiler:
-          - c: 'clang'
-            cpp: 'clang++'
-          - c: 'gcc'
-            cpp: 'g++'
-    env:
-       CMAKE_OPTIONS: ${{ matrix.cmake_opts }}
-       CC: ${{ matrix.compiler.c }}
-       CXX: ${{ matrix.compiler.cpp }}
-
+        os: [
+          ubuntu-latest,
+          windows-latest,
+          macos-latest,
+        ]
     steps:
-    - uses: actions/checkout@v1
-    - name: Install valgrind
-      run: |
-         sudo apt install -y valgrind
-    - name: Build and test
-      run: |
-         make
-         make test
-         make leakcheck
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+        fetch-depth: 0
 
-  macos:
+    - name: Setup Zig
+      uses: goto-bus-stop/setup-zig@v1.3.0
+      with:
+        version: 0.11.0
 
-    runs-on: macOS-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        cmake_opts:
-          - '-DCMARK_SHARED=ON'
-          - ''
-        compiler:
-          - c: 'clang'
-            cpp: 'clang++'
-          - c: 'gcc'
-            cpp: 'g++'
-    env:
-       CMAKE_OPTIONS: ${{ matrix.cmake_opts }}
-       CC: ${{ matrix.compiler.c }}
-       CXX: ${{ matrix.compiler.cpp }}
-
-    steps:
-    - uses: actions/checkout@v1
-    - name: Build and test
-      env:
-         CMAKE_OPTIONS: -DCMARK_SHARED=OFF
-      run: |
-         make
-         make test
-
-  windows:
-
-    runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        cmake_opts:
-          - '-DCMARK_SHARED=ON'
-          - ''
-    env:
-       CMAKE_OPTIONS: ${{ matrix.cmake_opts }}
-
-    steps:
-    - uses: actions/checkout@v1
-    - uses: ilammy/msvc-dev-cmd@v1
-    - name: Build and test
-      run: |
-        chcp 65001
-        nmake.exe /nologo /f Makefile.nmake test
-      shell: cmd
+    - run: zig build
