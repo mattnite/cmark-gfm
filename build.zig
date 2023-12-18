@@ -48,7 +48,14 @@ pub fn build(b: *Build) void {
     });
     cmark_extensions_lib.addConfigHeader(config);
     cmark_extensions_lib.addIncludePath(.{ .path = "src" });
-    cmark_extensions_lib.installHeader("extensions/cmark-gfm-core-extensions.h", "cmark-gfm-core-extensions.h");
+    cmark_extensions_lib.installHeader(
+        "extensions/cmark-gfm-core-extensions.h",
+        "cmark-gfm-core-extensions.h",
+    );
+    cmark_extensions_lib.installHeader(
+        "extensions/ext_scanners.h",
+        "ext_scanners.h",
+    );
     cmark_extensions_lib.addCSourceFiles(.{
         .files = extensions_src,
         .flags = &.{"-std=c99"},
@@ -81,7 +88,6 @@ const extensions_src: []const []const u8 = &.{
     "extensions/tagfilter.c",
     "extensions/ext_scanners.c",
     "extensions/ext_scanners_re.c",
-    "extensions/ext_scanners.h",
     "extensions/tasklist.c",
 };
 
