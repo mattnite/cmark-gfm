@@ -30,10 +30,10 @@ pub fn build(b: *Build) void {
     });
     cmark_lib.addConfigHeader(config);
     cmark_lib.addConfigHeader(version);
-    cmark_lib.installConfigHeader(version, .{});
-    cmark_lib.installHeader("src/cmark-gfm.h", "cmark-gfm.h");
-    cmark_lib.installHeader("src/cmark-gfm_export.h", "cmark-gfm_export.h");
-    cmark_lib.installHeader("src/cmark-gfm-extension_api.h", "cmark-gfm-extension_api.h");
+    cmark_lib.installConfigHeader(version);
+    cmark_lib.installHeader(.{ .path = "src/cmark-gfm.h" }, "cmark-gfm.h");
+    cmark_lib.installHeader(.{ .path = "src/cmark-gfm_export.h" }, "cmark-gfm_export.h");
+    cmark_lib.installHeader(.{ .path = "src/cmark-gfm-extension_api.h" }, "cmark-gfm-extension_api.h");
     cmark_lib.addCSourceFiles(.{
         .files = lib_src,
         .flags = &.{"-std=c99"},
@@ -46,14 +46,15 @@ pub fn build(b: *Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
+    cmark_extensions_lib.installLibraryHeaders(cmark_lib);
     cmark_extensions_lib.addConfigHeader(config);
     cmark_extensions_lib.addIncludePath(.{ .path = "src" });
     cmark_extensions_lib.installHeader(
-        "extensions/cmark-gfm-core-extensions.h",
+        .{ .path = "extensions/cmark-gfm-core-extensions.h" },
         "cmark-gfm-core-extensions.h",
     );
     cmark_extensions_lib.installHeader(
-        "extensions/ext_scanners.h",
+        .{ .path = "extensions/ext_scanners.h" },
         "ext_scanners.h",
     );
     cmark_extensions_lib.addCSourceFiles(.{
