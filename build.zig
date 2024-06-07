@@ -6,14 +6,14 @@ pub fn build(b: *Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const config = b.addConfigHeader(
-        .{ .style = .{ .cmake = .{ .path = "src/config.h.in" } } },
+        .{ .style = .{ .cmake = b.path("src/config.h.in") } },
         .{
             .HAVE_STDBOOL_H = true,
         },
     );
     const version = b.addConfigHeader(.{
         .style = .{
-            .cmake = .{ .path = "src/cmark-gfm_version.h.in" },
+            .cmake = b.path("src/cmark-gfm_version.h.in"),
         },
     }, .{
         .PROJECT_VERSION_MAJOR = "0",
@@ -31,9 +31,11 @@ pub fn build(b: *Build) void {
     cmark_lib.addConfigHeader(config);
     cmark_lib.addConfigHeader(version);
     cmark_lib.installConfigHeader(version);
-    cmark_lib.installHeader(.{ .path = "src/cmark-gfm.h" }, "cmark-gfm.h");
-    cmark_lib.installHeader(.{ .path = "src/cmark-gfm_export.h" }, "cmark-gfm_export.h");
-    cmark_lib.installHeader(.{ .path = "src/cmark-gfm-extension_api.h" }, "cmark-gfm-extension_api.h");
+
+    cmark_lib.installHeader(b.path("src/cmark-gfm.h"), "cmark-gfm.h");
+    cmark_lib.installHeader(b.path("src/cmark-gfm_export.h"), "cmark-gfm_export.h");
+    cmark_lib.installHeader(b.path("src/cmark-gfm-extension_api.h"), "cmark-gfm-extension_api.h");
+
     cmark_lib.addCSourceFiles(.{
         .files = lib_src,
         .flags = &.{"-std=c99"},
@@ -48,13 +50,13 @@ pub fn build(b: *Build) void {
     });
     cmark_extensions_lib.installLibraryHeaders(cmark_lib);
     cmark_extensions_lib.addConfigHeader(config);
-    cmark_extensions_lib.addIncludePath(.{ .path = "src" });
+    cmark_extensions_lib.addIncludePath(b.path("src"));
     cmark_extensions_lib.installHeader(
-        .{ .path = "extensions/cmark-gfm-core-extensions.h" },
+        b.path("extensions/cmark-gfm-core-extensions.h"),
         "cmark-gfm-core-extensions.h",
     );
     cmark_extensions_lib.installHeader(
-        .{ .path = "extensions/ext_scanners.h" },
+        b.path("extensions/ext_scanners.h"),
         "ext_scanners.h",
     );
     cmark_extensions_lib.addCSourceFiles(.{
@@ -74,7 +76,7 @@ pub fn build(b: *Build) void {
     cmark_exe.addConfigHeader(config);
     cmark_exe.addConfigHeader(version);
     cmark_exe.addCSourceFile(.{
-        .file = .{ .path = "src/main.c" },
+        .file = b.path("src/main.c"),
         .flags = &.{"-std=c99"},
     });
     cmark_exe.linkLibrary(cmark_extensions_lib);
