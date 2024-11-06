@@ -41,5 +41,6 @@ progit/
 bench/benchinput.md
 test/afl_results/
 
+.zig-cache
 zig-cache
 zig-out
