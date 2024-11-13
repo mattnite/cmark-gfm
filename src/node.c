@@ -725,6 +725,18 @@ int cmark_node_get_footnote_def_count(cmark_node *node) {
   return 0;
 }
 
+int cmark_node_get_footnote_ref_ix(cmark_node *node) {
+  if (node == NULL) {
+    return 0;
+  }
+
+  if (node->type == CMARK_NODE_FOOTNOTE_REFERENCE) {
+    return node->footnote.ref_ix;
+  }
+
+  return 0;
+}
+
 const char *cmark_node_get_on_enter(cmark_node *node) {
   if (node == NULL) {
     return NULL;
