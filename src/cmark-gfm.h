@@ -464,10 +464,15 @@ CMARK_GFM_EXPORT const char *cmark_node_get_title(cmark_node *node);
  */
 CMARK_GFM_EXPORT int cmark_node_set_title(cmark_node *node, const char *title);
 
-/** Returns the definition count of a footnote definition 'node'.
+/** Returns the reference count of a footnote definition 'node'.
     Returns 0 if called on a node that is not a footnote definition.
  */
 CMARK_GFM_EXPORT int cmark_node_get_footnote_def_count(cmark_node *node);
+
+/** Returns the reference index of a footnote reference 'node'.
+    Returns 0 if called on a node that is not a footnote definition.
+ */
+CMARK_GFM_EXPORT int cmark_node_get_footnote_ref_ix(cmark_node *node);
 
 /** Returns the literal "on enter" text for a custom 'node', or
     an empty string if no on_enter is set.  Returns NULL if called
